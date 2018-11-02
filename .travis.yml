@@ -1,0 +1,23 @@
+sudo: required
+services: 
+  - docker
+
+before_install:
+  on:
+    branch: master
+  - docker build -t eafang/react -f ./client/dev.Dockerfile ./client
+
+script:
+  - docker run eafang/react npm test -- --coverage
+
+after_success:
+  - docker build eafang/multi-client ./client
+  - docker build eafang/multi-server ./server
+  - docker build eafang/multi-worker ./worker
+  - docker build eafang/multi-nginx ./nginx
+  # Login Docker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push eafang/multi-client
+  - docker push eafang/multi-server
+  - docker push eafang/multi-worker
+  - docker push eafang/multi-nginx
