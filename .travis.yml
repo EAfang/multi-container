@@ -3,8 +3,6 @@ services:
   - docker
 
 before_install:
-  on:
-    branch: master
   - docker build -t eafang/react -f ./client/dev.Dockerfile ./client
 
 script:
