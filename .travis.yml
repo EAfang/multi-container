@@ -9,10 +9,10 @@ script:
   - docker run eafang/react npm test -- --coverage
 
 after_success:
-  - docker build eafang/multi-client ./client
-  - docker build eafang/multi-server ./server
-  - docker build eafang/multi-worker ./worker
-  - docker build eafang/multi-nginx ./nginx
+  - docker build -t eafang/multi-client ./client
+  - docker build -t eafang/multi-server ./server
+  - docker build -t eafang/multi-worker ./worker
+  - docker build -t eafang/multi-nginx ./nginx
   # Login Docker
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   - docker push eafang/multi-client
