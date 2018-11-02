@@ -3,10 +3,12 @@ services:
   - docker
 
 before_install:
+  on:
+    branch: master
   - docker build -t eafang/react -f ./client/dev.Dockerfile ./client
 
 script:
-  - docker run eafang/react npm run test -- --coverage
+  - docker run eafang/react npm test -- --coverage
 
 after_success:
   - docker build eafang/multi-client ./client
@@ -19,4 +21,3 @@ after_success:
   - docker push eafang/multi-server
   - docker push eafang/multi-worker
   - docker push eafang/multi-nginx
-  
