@@ -3,21 +3,32 @@ services:
   - docker
 
 before_install:
-  on:
-    branch: master
   - docker build -t eafang/react -f ./client/dev.Dockerfile ./client
 
 script:
   - docker run eafang/react npm test -- --coverage
 
 after_success:
-  - docker build eafang/multi-client ./client
-  - docker build eafang/multi-server ./server
-  - docker build eafang/multi-worker ./worker
-  - docker build eafang/multi-nginx ./nginx
+  - docker build -t eafang/multi-client ./client
+  - docker build -t eafang/multi-server ./server
+  - docker build -t eafang/multi-worker ./worker
+  - docker build -t eafang/multi-nginx ./nginx
   # Login Docker
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   - docker push eafang/multi-client
   - docker push eafang/multi-server
   - docker push eafang/multi-worker
   - docker push eafang/multi-nginx
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-1"
+  app: "multi-docker"
+  env: "MultiDocker-env"
+  bucket_name: "elasticbeanstalk-us-east-1-787969269847"
+  bucket_path: "multi-docker"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
